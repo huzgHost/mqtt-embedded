@@ -36,6 +36,7 @@ int MQTTPacket_encode(unsigned char* buf, int length)
 		char d = length % 128;
 		length /= 128;
 		/* if there are more digits to encode, set the top bit of this digit */
+        //超过0x7F bit，第7位至1
 		if (length > 0)
 			d |= 0x80;
 		buf[rc++] = d;

@@ -59,6 +59,7 @@ int MQTTSerialize_connect(unsigned char* buf, int buflen, MQTTPacket_connectData
 {
 	unsigned char *ptr = buf;
 	MQTTHeader header = {0};
+    //connect中的 连接标志位
 	MQTTConnectFlags flags = {0};
 	int len = 0;
 	int rc = -1;
@@ -70,23 +71,25 @@ int MQTTSerialize_connect(unsigned char* buf, int buflen, MQTTPacket_connectData
 		goto exit;
 	}
 
+    //MQTT协议固定包头
 	header.byte = 0;
 	header.bits.type = CONNECT;
 	writeChar(&ptr, header.byte); /* write header */
 
 	ptr += MQTTPacket_encode(ptr, len); /* write remaining length */
 
+    //MQTT协议可变报头
 	if (options->MQTTVersion == 4)
 	{
-		writeCString(&ptr, "MQTT");
-		writeChar(&ptr, (char) 4);
+        writeCString(&ptr, "MQTT");//协议名
+        writeChar(&ptr, (char) 4);//协议级别
 	}
 	else
 	{
-		writeCString(&ptr, "MQIsdp");
-		writeChar(&ptr, (char) 3);
+        writeCString(&ptr, "MQIsdp");//协议名
+        writeChar(&ptr, (char) 3);//协议级别
 	}
-
+    //MQTT连接标志
 	flags.all = 0;
 	flags.bits.cleansession = options->cleansession;
 	flags.bits.will = (options->willFlag) ? 1 : 0;
@@ -101,18 +104,18 @@ int MQTTSerialize_connect(unsigned char* buf, int buflen, MQTTPacket_connectData
 	if (options->password.cstring || options->password.lenstring.data)
 		flags.bits.password = 1;
 
-	writeChar(&ptr, flags.all);
-	writeInt(&ptr, options->keepAliveInterval);
-	writeMQTTString(&ptr, options->clientID);
+    writeChar(&ptr, flags.all);//协议连接标志
+    writeInt(&ptr, options->keepAliveInterval);//协议xx
+    writeMQTTString(&ptr, options->clientID);//负载:客户端标识符
 	if (options->willFlag)
 	{
 		writeMQTTString(&ptr, options->will.topicName);
 		writeMQTTString(&ptr, options->will.message);
 	}
 	if (flags.bits.username)
-		writeMQTTString(&ptr, options->username);
+        writeMQTTString(&ptr, options->username);//用户名标志位
 	if (flags.bits.password)
-		writeMQTTString(&ptr, options->password);
+        writeMQTTString(&ptr, options->password);//密码标志位
 
 	rc = ptr - buf;
 

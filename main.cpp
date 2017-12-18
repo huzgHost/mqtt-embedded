@@ -42,7 +42,7 @@ struct opts_struct
     int showtopics;
 } opts =
 {
-    (char*)"stdout-subscriber", 0, (char*)"\n", QOS2, NULL, NULL, (char*)"localhost", 1883, 0
+    (char*)"launch-subscriber", 0, (char*)"\n", QOS2, NULL, NULL, (char*)"localhost", 1883, 0
 };
 
 
