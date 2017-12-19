@@ -66,20 +66,20 @@ int MQTTSerialize_publish(unsigned char* buf, int buflen, unsigned char dup, int
 		rc = MQTTPACKET_BUFFER_TOO_SHORT;
 		goto exit;
 	}
-
+    //------- 固定报文头 ------------------
 	header.bits.type = PUBLISH;
 	header.bits.dup = dup;
 	header.bits.qos = qos;
 	header.bits.retain = retained;
 	writeChar(&ptr, header.byte); /* write header */
-
+    //------- 剩余长度 ------------------
 	ptr += MQTTPacket_encode(ptr, rem_len); /* write remaining length */;
-
+    //------- 可变报文头:主题名 ------------------
 	writeMQTTString(&ptr, topicName);
-
+    //------- 可变报文头:报文标识符 ------------------
 	if (qos > 0)
 		writeInt(&ptr, packetid);
-
+    //------- 可变报文头:有效负载 ------------------
 	memcpy(ptr, payload, payloadlen);
 	ptr += payloadlen;
 

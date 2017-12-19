@@ -72,11 +72,11 @@ int MQTTSerialize_subscribe(unsigned char* buf, int buflen, unsigned char dup, u
 	ptr += MQTTPacket_encode(ptr, rem_len); /* write remaining length */;
 
 	writeInt(&ptr, packetid);
-
+    //--------------- 负载数据--------------------------------
 	for (i = 0; i < count; ++i)
 	{
-		writeMQTTString(&ptr, topicFilters[i]);
-		writeChar(&ptr, requestedQoSs[i]);
+        writeMQTTString(&ptr, topicFilters[i]);//订阅:主题过滤器
+        writeChar(&ptr, requestedQoSs[i]);//订阅:服务质量要求Qos
 	}
 
 	rc = ptr - buf;

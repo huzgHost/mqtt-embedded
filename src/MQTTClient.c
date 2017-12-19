@@ -112,6 +112,7 @@ static int readPacket(MQTTClient* c, Timer* timer)
     int rem_len = 0;
 
     /* 1. read the header byte.  This has the packet type in it */
+    //读取收到的信息的消息头
     int rc = c->ipstack->mqttread(c->ipstack, c->readbuf, 1, TimerLeftMS(timer));
     if (rc != 1)
         goto exit;
@@ -342,7 +343,7 @@ int MQTTYield(MQTTClient* c, int timeout_ms)
     TimerInit(&timer);
     TimerCountdownMS(&timer, timeout_ms);
 
-	  do
+    do
     {
         if (cycle(c, &timer) < 0)
         {
@@ -428,12 +429,15 @@ int MQTTConnectWithResults(MQTTClient* c, MQTTPacket_connectData* options, MQTTC
     c->keepAliveInterval = options->keepAliveInterval;
     c->cleansession = options->cleansession;
     TimerCountdown(&c->last_received, c->keepAliveInterval);//c->last_received->end_time=10
+    //设置connect连接报文
     if ((len = MQTTSerialize_connect(c->buf, c->buf_size, options)) <= 0)
         goto exit;
+    //将connect报文发送到服务器
     if ((rc = sendPacket(c, len, &connect_timer)) != SUCCESS)  // send the connect packet
         goto exit; // there was a problem
 
     // this will be a blocking call, wait for the connack
+    //等待接受 服务端发送connack
     if (waitfor(c, CONNACK, &connect_timer) == CONNACK)
     {
         data->rc = 0;

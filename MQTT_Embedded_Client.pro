@@ -26,7 +26,9 @@ SOURCES += main.cpp \
     src/MQTTSubscribeClient.c \
     src/MQTTSubscribeServer.c \
     src/MQTTUnsubscribeClient.c \
-    src/MQTTUnsubscribeServer.c
+    src/MQTTUnsubscribeServer.c \
+    demo/pub.c \
+    demo/sub.c
 
 HEADERS += \
     src/MQTTClient.h \
@@ -37,4 +39,6 @@ HEADERS += \
     src/MQTTPublish.h \
     src/MQTTSubscribe.h \
     src/MQTTUnsubscribe.h \
-    src/StackTrace.h
+    src/StackTrace.h \
+    demo/pub.h \
+    demo/sub.h
